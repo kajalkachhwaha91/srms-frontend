@@ -1,6 +1,79 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { FaDownload } from "react-icons/fa";
+import { HiChevronRight } from "react-icons/hi";
+import { RxCross2 } from "react-icons/rx"; // For error icon
 
+// --- Constants ---
+const API_BASE_URL = "https://student-result-management-system-vikh.onrender.com";
+// **IMPORTANT:** Replace 'S101' with the actual logged-in student's ID
+const STUDENT_ID = "S101"; 
+
+// --- Breadcrumb Component ---
+const InternalMarksBreadcrumb = () => (
+  <div className="mb-6">
+    <nav className="flex" aria-label="Breadcrumb">
+      <ol role="list" className="flex items-center space-x-2 text-sm">
+        <li>
+          {/* Assuming a route like '/student/dashboard' */}
+          <a href="/dashboard" className="text-gray-500 hover:text-cyan-600 transition-colors">
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <HiChevronRight className="w-4 h-4 text-gray-400" />
+        </li>
+        <li className="font-medium text-cyan-600">Internal Marks</li>
+      </ol>
+    </nav>
+  </div>
+);
+
+// --- Table Component (Styling Updated) ---
+const MarksTable = ({ title, data }) => (
+  <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+    <h2 className="text-xl font-bold text-gray-800 mb-4">{title}</h2>
+    
+    <div className="overflow-x-auto border border-gray-200 rounded-lg">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-cyan-500 text-white">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+              Subject Name
+            </th>
+            <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider">
+              Mark
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-100">
+          {data.map((row, index) => (
+            <tr
+              key={index}
+              className={`${
+                index % 2 === 0 ? "bg-gray-50" : "bg-white"
+              } hover:bg-cyan-50 transition-colors duration-150`}
+            >
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {row.subject}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-cyan-600">
+                {row.mark}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+// --- Main Component ---
 const InternalMarks = () => {
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState(null);
+
+  // Mock data as provided in the previous step
   const firstInternal = [
     { subject: "(CS3452) Theory of Computation", mark: "75/100" },
     { subject: "(CS3751) Data Structures", mark: "97/100" },
@@ -14,44 +87,119 @@ const InternalMarks = () => {
     { subject: "(CS3453) Cryptography and Cyber Security", mark: "30/40" },
     { subject: "(CS3852) Database Management System", mark: "39/40" },
   ];
+  
+  /**
+   * Handles the download of the marksheet by calling the API.
+   * The response is expected to be a file (e.g., HTML/PDF) which is treated as a Blob.
+   */
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    setDownloadError(null);
+    
+    try {
+      const downloadUrl = `${API_BASE_URL}/marks/download/${STUDENT_ID}`;
+      
+      const response = await axios.get(downloadUrl, {
+        responseType: 'blob', // Crucial for downloading files
+      });
 
-  const Table = ({ data }) => (
-    <table className="w-full border-collapse rounded-lg overflow-hidden shadow">
-      <thead>
-        <tr className="bg-sky-500 text-white text-left">
-          <th className="p-3 font-semibold">Subject Name</th>
-          <th className="p-3 font-semibold text-center">Mark</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row, index) => (
-          <tr
-            key={index}
-            className={`${
-              index % 2 === 0 ? "bg-sky-100" : "bg-sky-50"
-            } border-t border-gray-200`}
-          >
-            <td className="p-3">{row.subject}</td>
-            <td className="p-3 text-center">{row.mark}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+      // 1. Create a Blob object from the response data
+      const contentType = response.headers['content-type'] || 'application/octet-stream';
+      const blob = new Blob([response.data], { type: contentType });
+      
+      // 2. Create a temporary URL for the Blob
+      const url = window.URL.createObjectURL(blob);
+      
+      // 3. Create a temporary anchor element and trigger the download
+      const link = document.createElement('a');
+      link.href = url;
+      // Get filename from headers, or use a default name
+      const filename = response.headers['content-disposition'] 
+        ? response.headers['content-disposition'].split('filename=')[1] 
+        : `Marksheet_${STUDENT_ID}.pdf`; 
+        
+      link.setAttribute('download', filename.replace(/"/g, '')); // Remove quotes if present
+      document.body.appendChild(link);
+      link.click();
+      
+      // 4. Clean up the temporary URL and link
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+    } catch (err) {
+      console.error("Error downloading marksheet:", err);
+      // For API errors returning JSON/Text, handle the error message
+      if (err.response && err.response.data instanceof Blob) {
+        // Read the error message from the Blob (if the server sends error info as a Blob)
+        const text = await err.response.data.text();
+        setDownloadError(`Download failed: ${text.substring(0, 100)}...`);
+      } else if (err.response) {
+        setDownloadError(err.response.data.message || `Download failed: Status ${err.response.status}`);
+      } else {
+        setDownloadError(`Network Error: ${err.message}`);
+      }
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6 space-y-6">
-      <div className="bg-white w-full max-w-3xl rounded-lg shadow p-4">
-        <h2 className="text-lg font-semibold mb-4">
-          First Internal Examination
-        </h2>
-        <Table data={firstInternal} />
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen p-4 sm:p-6 lg:p-8">
+      
+      {/* Breadcrumb */}
+      <InternalMarksBreadcrumb />
+
+      {/* Header and Download Button */}
+      <div className="mb-6">
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-1">
+                Student Internal Marks
+              </h1>
+              <p className="text-sm text-gray-500">
+                View detailed marks for internal examinations and semester internals.
+              </p>
+            </div>
+            
+            {/* Download Button */}
+            <button 
+              onClick={handleDownload}
+              className={`flex items-center text-white px-5 py-3 rounded-lg text-sm font-medium shadow-md transition-colors whitespace-nowrap ${
+                isDownloading 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-cyan-500 hover:bg-cyan-600'
+              }`}
+              disabled={isDownloading}
+              title="Download Marksheet"
+            >
+              {isDownloading ? (
+                <div className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-white mr-2"></div>
+              ) : (
+                <FaDownload className="w-4 h-4 mr-2" />
+              )}
+              {isDownloading ? "Downloading..." : "Download Marksheet"}
+            </button>
+          </div>
+
+          {/* Download Error Display (Similar to StaffManagement error block) */}
+          {downloadError && (
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center">
+                <RxCross2 className="w-5 h-5 mr-3 flex-shrink-0" />
+                <p className="text-sm font-medium">{downloadError}</p>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      {/* Marks Tables Container */}
+      <div className="max-w-4xl mx-auto">
+        <MarksTable title="First Internal Examination" data={firstInternal} />
+        
+        <MarksTable title="Semester Internal Marks" data={semesterInternal} />
       </div>
 
-      <div className="bg-white w-full max-w-3xl rounded-lg shadow p-4">
-        <h2 className="text-lg font-semibold mb-4">Semester Internal Marks</h2>
-        <Table data={semesterInternal} />
-      </div>
     </div>
   );
 };

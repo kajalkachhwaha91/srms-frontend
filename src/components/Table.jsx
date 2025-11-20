@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { IoIosSearch } from "react-icons/io";
-import { Button } from "./ui/Button";
+import Button from "./ui/Button";
 
 const DataTable = ({
   title = "Students",
