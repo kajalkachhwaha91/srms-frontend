@@ -7,7 +7,7 @@ export const studentMenu = [
   { name: "Marks", path: "/student/internal-marks", icon: FileText },
   { name: "Results", path: "/student/semester-grades", icon: FileText },
   { name: "Notes", path: "/student/notes", icon: Download },
-  { name: "Timetable", path: "/student/timetable", icon: Users },
+  
 ];
 
 export const staffMenu = [
@@ -15,6 +15,7 @@ export const staffMenu = [
   { name: "Manage Students", path: "/staff/students", icon: Users },
   { name: "Assignments", path: "/staff/assignments", icon: ClipboardList },
   { name: "Results", path: "/staff/results", icon: FileText },
+  { name: "Marks", path: "/staff/marks", icon: FileText },
 ];
 
 export const adminMenu = [
@@ -24,6 +25,6 @@ export const adminMenu = [
   { name: "Assignments", path: "/admin/assignments", icon: ClipboardList },
   { name: "Results", path: "/admin/results", icon: FileText },
 //   { name: "Notes", path: "/admin/notes", icon: Download },
-  { name: "TimeTable", path: "/admin/timetable", icon: Calendar },
+  
 //   { name: "Notifications", path: "/admin/notifications", icon: Bell },
 ];
