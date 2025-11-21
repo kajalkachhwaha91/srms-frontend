@@ -8,8 +8,8 @@ const LOGIN_URL = `${BASE_URL}/auth/login`;
 
 const Login = () => {
     // Existing State
-    const [email, setEmail] = useState("Kachhwahakajal91@gmail.com");
-    const [password, setPassword] = useState("Kajal@91");
+    const [email, setEmail] = useState("kajal@example.com");
+    const [password, setPassword] = useState("Kajal1234");
     const [role, setRole] = useState("");
     const navigate = useNavigate();
 
@@ -219,10 +219,14 @@ const Login = () => {
                             )}
                         </button>
 
-                        {/* Forget Password Link */}
-                        <p className="text-sm text-center mt-4 text-[#00b8f1] font-medium cursor-pointer hover:underline">
-                            Forget Password?
-                        </p>
+                        {/* sign up  Link */}
+                        <p 
+    className="text-sm text-center mt-4 text-[#00b8f1] font-medium cursor-pointer hover:underline"
+    onClick={() => navigate("/signup")}
+>
+    Don't have an account? Create Account
+</p>
+
                     </div>
                 </div>
             </div>

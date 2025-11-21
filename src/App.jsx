@@ -3,6 +3,7 @@ import Layout from "./components/Layout";
 import LandingPage from "./pages/auth/LandingPage";
 import Login from "./pages/auth/LoginPage";
 import { studentMenu, staffMenu, adminMenu } from "./components/menuItems";
+import Signup from "./pages/auth/Signup";
 
 // Student pages
 import Students from "./pages/modules/dashboard/student/Student";
@@ -50,6 +51,8 @@ function AppRoutes() {
       {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+
 
       {/* Protected layout routes */}
       <Route
