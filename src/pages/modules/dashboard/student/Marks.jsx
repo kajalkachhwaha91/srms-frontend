@@ -3,7 +3,7 @@ import axios from "axios";
 import { FaDownload } from "react-icons/fa";
 import { HiChevronRight } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx"; // For error icon
-
+// bg-gradient-to-br from-cyan-500 to-blue-600
 // --- Constants ---
 const API_BASE_URL = "https://student-result-management-system-vikh.onrender.com";
 // **IMPORTANT:** Replace 'S101' with the actual logged-in student's ID
@@ -14,12 +14,7 @@ const InternalMarksBreadcrumb = () => (
   <div className="mb-6">
     <nav className="flex" aria-label="Breadcrumb">
       <ol role="list" className="flex items-center space-x-2 text-sm">
-        <li>
-          {/* Assuming a route like '/student/dashboard' */}
-          <a href="/dashboard" className="text-gray-500 hover:text-cyan-600 transition-colors">
-            Dashboard
-          </a>
-        </li>
+        
         <li>
           <HiChevronRight className="w-4 h-4 text-gray-400" />
         </li>
@@ -36,7 +31,7 @@ const MarksTable = ({ title, data }) => (
     
     <div className="overflow-x-auto border border-gray-200 rounded-lg">
       <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-cyan-500 text-white">
+        <thead className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
               Subject Name
@@ -52,7 +47,7 @@ const MarksTable = ({ title, data }) => (
               key={index}
               className={`${
                 index % 2 === 0 ? "bg-gray-50" : "bg-white"
-              } hover:bg-cyan-50 transition-colors duration-150`}
+              } hover:bg-gradient-to-br from-cyan-500 to-blue-600 transition-colors duration-150`}
             >
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {row.subject}
@@ -168,8 +163,8 @@ const InternalMarks = () => {
               onClick={handleDownload}
               className={`flex items-center text-white px-5 py-3 rounded-lg text-sm font-medium shadow-md transition-colors whitespace-nowrap ${
                 isDownloading 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-cyan-500 hover:bg-cyan-600'
+                ? 'bg-gradient-to-br from-cyan-500 to-blue-600 cursor-not-allowed' 
+                : 'bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700'
               }`}
               disabled={isDownloading}
               title="Download Marksheet"

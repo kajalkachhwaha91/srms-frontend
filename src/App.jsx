@@ -10,11 +10,15 @@ import AssignmentsPage from "./pages/modules/dashboard/student/Assignment";
 import InternalMarks from "./pages/modules/dashboard/student/Marks";
 import SemesterGrades from "./pages/modules/dashboard/student/Result";
 import NotesTable from "./pages/modules/dashboard/student/Notes";
+import StudentProfile from "./pages/modules/profile/StudentProfile";
 
 // Staff pages
 import StaffPage from "./pages/modules/dashboard/staff/Staff";
 import Assignments from "./pages/modules/dashboard/staff/Assigments";
 import Marks from "./pages/modules/dashboard/staff/Marks";
+import StaffProfile from "./pages/modules/profile/StaffProfile";
+import Student from "./pages/modules/dashboard/staff/Students"
+
 
 // Admin pages
 import AdminPage from "./pages/modules/dashboard/admin/Admin";
@@ -22,6 +26,7 @@ import StudentPage from "./pages/modules/dashboard/admin/Students";
 import AdminStaffPage from "./pages/modules/dashboard/admin/Staff";
 import AdminAssignments from "./pages/modules/dashboard/admin/Assigments";
 import AdminSemesterResults from "./pages/modules/dashboard/admin/Results";
+import AdminProfile from "./pages/modules/profile/AdminProfile";
 
 function AppRoutes() {
   const location = useLocation();
@@ -63,12 +68,15 @@ function AppRoutes() {
         <Route path="/student/internal-marks" element={<InternalMarks />} />
         <Route path="/student/semester-grades" element={<SemesterGrades />} />
         <Route path="/student/notes" element={<NotesTable />} />
-        
+        <Route path="/student/profile" element={<StudentProfile />} />
 
         {/* Staff Routes */}
         <Route path="/staff" element={<StaffPage />} />
         <Route path="/staff/assignments" element={<Assignments />} />
         <Route path="/staff/marks" element={<Marks />} />
+        <Route path="/staff/profile" element={<StaffProfile />} />
+        <Route path="/staff/students" element={<Student />} />
+        
         {/* Add more staff routes here */}
 
         {/* Admin Routes */}
@@ -77,7 +85,7 @@ function AppRoutes() {
         <Route path="/admin/staff" element={<AdminStaffPage />} />
         <Route path="/admin/assignments" element={<AdminAssignments />} />
         <Route path="/admin/results" element={<AdminSemesterResults />} />
-        
+        <Route path="/admin/profile" element={<AdminProfile />} />
       </Route>
     </Routes>
   );
