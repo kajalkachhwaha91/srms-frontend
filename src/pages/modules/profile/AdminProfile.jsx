@@ -15,8 +15,13 @@ export default function ProfilePage() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      // Hardcoded token
-      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthamFsQGV4YW1wbGUuY29tIiwicm9sZSI6IlRlYWNoZXIiLCJleHAiOjE3NjM2ODg1Mjh9.sMbixUY6J8LYbbg6GGpKZQAGmuYHXdl89UO6sX14te0';
+      
+      // Get token from localStorage (CORRECTED!)
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        throw new Error('No authentication token found. Please login again.');
+      }
       
       const response = await fetch('https://student-result-management-system-vikh.onrender.com/auth/profile', {
         method: 'GET',
@@ -36,15 +41,26 @@ export default function ProfilePage() {
       setError(null);
     } catch (err) {
       setError(err.message);
-      // Mock data for demonstration
-      const mockData = {
-        id: "6910b792a7c90018ae565ab6",
-        name: "kajal",
-        email: "kajal@example.com",
-        role: "Teacher"
-      };
-      setProfile(mockData);
-      setEditedProfile(mockData);
+      
+      // Try to get user data from localStorage as fallback
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        try {
+          const parsedData = JSON.parse(userData);
+          setProfile(parsedData);
+          setEditedProfile(parsedData);
+        } catch (parseError) {
+          // If parsing fails, use mock data
+          const mockData = {
+            id: "6910b792a7c90018ae565ab6",
+            name: "kajal",
+            email: "kajal@example.com",
+            role: "Teacher"
+          };
+          setProfile(mockData);
+          setEditedProfile(mockData);
+        }
+      }
     } finally {
       setLoading(false);
     }
@@ -60,10 +76,36 @@ export default function ProfilePage() {
   };
 
   const handleSave = async () => {
-    // Add your update API call here
-    console.log('Saving profile:', editedProfile);
-    setIsEditing(false);
-    setProfile(editedProfile);
+    try {
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        setError('No authentication token found');
+        return;
+      }
+
+      // Add your update API call here
+      const response = await fetch('https://student-result-management-system-vikh.onrender.com/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editedProfile)
+      });
+
+      if (response.ok) {
+        setProfile(editedProfile);
+        setIsEditing(false);
+        // Update localStorage with new data
+        localStorage.setItem('userData', JSON.stringify(editedProfile));
+      } else {
+        throw new Error('Failed to update profile');
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Error updating profile:', err);
+    }
   };
 
   const handleChange = (field, value) => {
@@ -83,8 +125,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-     
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
@@ -104,7 +144,11 @@ export default function ProfilePage() {
               <h2 className="text-2xl font-bold text-gray-900">Profile Information</h2>
               <p className="text-sm text-gray-500 mt-1">View and manage your account details</p>
             </div>
-           
+            <div className="flex space-x-2">
+              
+                 
+            
+            </div>
           </div>
 
           {/* Profile Content */}
@@ -112,7 +156,7 @@ export default function ProfilePage() {
             {error && (
               <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm text-yellow-800">
-                  Note: Using mock data for demonstration. API Error: {error}
+                  Note: {error}
                 </p>
               </div>
             )}
@@ -135,15 +179,7 @@ export default function ProfilePage() {
               {/* Profile Details */}
               <div className="flex-1 space-y-6">
                 {/* User ID */}
-                <div>
-                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                    <Key className="w-4 h-4 mr-2 text-gray-400" />
-                    User ID
-                  </label>
-                  <div className="px-4 py-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <p className="text-sm text-gray-900 font-mono">{profile?.id}</p>
-                  </div>
-                </div>
+                
 
                 {/* Name */}
                 <div>
@@ -193,7 +229,7 @@ export default function ProfilePage() {
                   </label>
                   <div className="px-4 py-3 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-900">Admin</p>
+                      <p className="text-sm text-gray-900 capitalize">{profile?.role}</p>
                       <span className="px-3 py-1 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
                         {profile?.role}
                       </span>

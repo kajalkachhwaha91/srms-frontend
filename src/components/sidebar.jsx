@@ -74,15 +74,7 @@ const Sidebar = ({ menuItems, userRole }) => {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t flex items-center justify-between">
-          <div>
-            <p className="text-sm font-semibold text-gray-700">{userRole}</p>
-            <p className="text-xs text-gray-500">Logged in</p>
-          </div>
-          <button className="text-gray-600 hover:text-red-500">
-            <LogOut size={20} />
-          </button>
-        </div>
+        
       </div>
     </>
   );

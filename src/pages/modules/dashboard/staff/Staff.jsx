@@ -140,7 +140,7 @@ const StaffPage = () => {
           </div>
 
           {/* Average Marks */}
-          <div className="bg-white border-2 border-green-200 rounded-xl p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105">
+          {/* <div className="bg-white border-2 border-green-200 rounded-xl p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between mb-3">
               <div className="bg-green-100 rounded-lg p-3">
                 <CheckCircle className="text-green-600" size={24} />
@@ -153,7 +153,7 @@ const StaffPage = () => {
             <span className="text-3xl font-bold text-gray-800 block mt-1">
               {avgMarks}%
             </span>
-          </div>
+          </div> */}
 
           {/* Total Assignments */}
           <div className="bg-white border-2 border-blue-200 rounded-xl p-5 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105">
