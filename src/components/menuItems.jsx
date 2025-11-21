@@ -12,9 +12,8 @@ export const studentMenu = [
 
 export const staffMenu = [
   { name: "Dashboard", path: "/staff", icon: Home },
-  { name: "Manage Students", path: "/staff/students", icon: Users },
+  { name: " Students", path: "/staff/students", icon: Users },
   { name: "Assignments", path: "/staff/assignments", icon: ClipboardList },
-  { name: "Results", path: "/staff/results", icon: FileText },
   { name: "Marks", path: "/staff/marks", icon: FileText },
 ];
 
