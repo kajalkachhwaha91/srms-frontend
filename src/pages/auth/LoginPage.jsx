@@ -13,10 +13,9 @@ const Login = () => {
     const [role, setRole] = useState("");
     const navigate = useNavigate();
 
-    // New State for API Integration
     const [availableRoles, setAvailableRoles] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [message, setMessage] = useState(''); // Custom message box content
+    const [message, setMessage] = useState('');
 
     // --- 1. Fetch Available Roles on Component Mount ---
     useEffect(() => {
@@ -27,7 +26,6 @@ const Login = () => {
                     throw new Error("Failed to fetch roles from server.");
                 }
                 const data = await response.json();
-                // The API returns roles in the format: { roles: [{id: 1, name: "Admin"}, ...] }
                 setAvailableRoles(data.roles || []);
             } catch (error) {
                 console.error("Error fetching roles:", error);
@@ -35,13 +33,12 @@ const Login = () => {
             }
         };
         fetchRoles();
-    }, []); // Empty dependency array ensures this runs once on mount
-
+    }, []);
 
     // --- 2. Handle Login (API Call) ---
     const handleLogin = async (e) => {
         e.preventDefault();
-        setMessage(''); // Clear previous messages
+        setMessage('');
 
         if (isLoading) return;
 
@@ -50,7 +47,6 @@ const Login = () => {
             return;
         }
 
-        // Set loading state and prepare payload
         setIsLoading(true);
         
         try {
@@ -63,59 +59,92 @@ const Login = () => {
             const data = await response.json();
             
             if (!response.ok) {
-                // If response status is 4xx or 5xx
                 throw new Error(data.message || "Invalid credentials or login failed.");
             }
 
-            // --- Success Handling ---
-            
-            // Store the token and user data (Important for subsequent requests)
-            // Note: In a real app, you would use a global state manager or context for this.
+            // --- Success: Store Auth Data ---
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('userData', JSON.stringify(data.user));
 
-            const serverRole = data.user.role.toLowerCase();
-            const selectedRole = role.toLowerCase();
+            // --- Extract and Normalize Roles ---
+            // Handle different possible API response structures
+            let serverRole = '';
             
-            // Log for debugging and confirmation
-            console.log("Login successful. Server role:", serverRole);
-            
-            // --- Redirection Logic (using selected role for now, mapped from server role) ---
-
-            // The API uses "Teacher" but the UI uses "Staff". We map here for clean redirection.
-            const redirectRole = serverRole === "teacher" ? "staff" : serverRole;
-
-            // Check if the selected role matches the server role (best practice)
-            // or simply redirect based on the selected role (as per original logic)
-            if (selectedRole === redirectRole) {
-                 if (selectedRole === "student") {
-                     navigate("/student");
-                 } else if (selectedRole === "staff") {
-                     navigate("/staff");
-                 } else if (selectedRole === "admin") {
-                     navigate("/admin");
-                 }
-            } else {
-                // Handle role mismatch gracefully
-                setMessage(`Login successful, but role mismatch! Selected: ${selectedRole}, Server: ${redirectRole}. Please re-select or continue.`);
-                
-                // For demonstration, redirecting based on the *server's* validated role.
-                if (redirectRole === "student") navigate("/student");
-                else if (redirectRole === "staff") navigate("/staff");
-                else if (redirectRole === "admin") navigate("/admin");
+            if (data.user && data.user.role) {
+                if (typeof data.user.role === 'string') {
+                    serverRole = data.user.role.toLowerCase();
+                } else if (data.user.role.name) {
+                    serverRole = data.user.role.name.toLowerCase();
+                }
             }
 
+            const selectedRole = role.toLowerCase();
+            
+            // Map "teacher" to "staff" for consistency
+            const mappedServerRole = serverRole === "teacher" ? "staff" : serverRole;
+            
+            // --- Detailed Logging for Debugging ---
+            console.log("=== LOGIN DEBUG INFO ===");
+            console.log("Full API Response:", data);
+            console.log("User Object:", data.user);
+            console.log("Selected Role:", selectedRole);
+            console.log("Server Role (raw):", serverRole);
+            console.log("Mapped Server Role:", mappedServerRole);
+            console.log("========================");
+            
+            // --- Role-Based Navigation Logic ---
+            // Priority: Use the SELECTED role if it matches, otherwise use SERVER role
+            
+            let navigationPath = '';
+            let roleToUse = '';
+            
+            // Check if roles match
+            if (selectedRole === mappedServerRole) {
+                roleToUse = selectedRole;
+                console.log("✓ Roles match! Using selected role:", roleToUse);
+            } else {
+                roleToUse = mappedServerRole;
+                console.log("⚠ Role mismatch! Selected:", selectedRole, "| Server:", mappedServerRole);
+                setMessage(`Role mismatch detected! Your account is: ${mappedServerRole.toUpperCase()}`);
+            }
+            
+            // Determine navigation path based on role
+            switch(roleToUse) {
+                case "admin":
+                    navigationPath = "/admin";
+                    console.log("→ Navigating to ADMIN dashboard");
+                    break;
+                case "student":
+                    navigationPath = "/student";
+                    console.log("→ Navigating to STUDENT dashboard");
+                    break;
+                case "staff":
+                    navigationPath = "/staff";
+                    console.log("→ Navigating to STAFF dashboard");
+                    break;
+                default:
+                    setMessage(`Unknown role: ${roleToUse}. Please contact support.`);
+                    setIsLoading(false);
+                    return;
+            }
+            
+            // Navigate to the determined path
+            if (navigationPath) {
+                console.log("Final Navigation Path:", navigationPath);
+                
+                // Small delay to ensure state is saved
+                setTimeout(() => {
+                    navigate(navigationPath, { replace: true });
+                }, 100);
+            }
 
         } catch (error) {
-            // Display error message to the user
             console.error("Login API Error:", error.message);
             setMessage(error.message || "An unknown network error occurred. Try again.");
         } finally {
-            // Always stop loading regardless of success or failure
             setIsLoading(false);
         }
     };
-
 
     return (
         <div className="flex h-screen bg-gray-100 relative overflow-hidden font-inter">
@@ -125,13 +154,13 @@ const Login = () => {
 
             {/* Message Box / Alert UI */}
             {message && (
-                <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-50 p-4 bg-red-500 text-white rounded-lg shadow-xl max-w-sm w-full text-center animate-pulse">
+                <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-50 p-4 bg-red-500 text-white rounded-lg shadow-xl max-w-sm w-full text-center">
                     <p className="font-medium">{message}</p>
                     <button 
                         onClick={() => setMessage('')} 
-                        className="ml-3 text-sm font-bold opacity-80 hover:opacity-100 transition-opacity"
+                        className="mt-2 text-sm font-bold opacity-80 hover:opacity-100 transition-opacity underline"
                     >
-                        [Dismiss]
+                        Dismiss
                     </button>
                 </div>
             )}
@@ -181,19 +210,18 @@ const Login = () => {
                             onChange={(e) => setRole(e.target.value)}
                             className="w-full border-2 border-[#00b8f1] rounded-lg px-4 py-3 mb-6 focus:outline-none focus:ring-2 focus:ring-[#00b8f1] focus:border-transparent text-gray-700 bg-white cursor-pointer appearance-none transition duration-150"
                         >
-                            <option value="" disabled={role !== ""}>
+                            <option value="" disabled>
                                 {availableRoles.length === 0 ? "Loading Roles..." : "Select Role"}
                             </option>
-                            {availableRoles.map((r) => (
-                                <option 
-                                    key={r.id} 
-                                    // Use the role name as the value (e.g., "Admin", "Teacher", "Student")
-                                    // then convert to lowercase for the internal logic ("admin", "staff", "student")
-                                    value={r.name.toLowerCase() === 'teacher' ? 'staff' : r.name.toLowerCase()}
-                                >
-                                    {r.name === 'Teacher' ? 'Staff' : r.name}
-                                </option>
-                            ))}
+                            {availableRoles.map((r) => {
+                                const displayName = r.name === 'Teacher' ? 'Staff' : r.name;
+                                const roleValue = r.name.toLowerCase() === 'teacher' ? 'staff' : r.name.toLowerCase();
+                                return (
+                                    <option key={r.id} value={roleValue}>
+                                        {displayName}
+                                    </option>
+                                );
+                            })}
                         </select>
 
                         {/* Login Button */}

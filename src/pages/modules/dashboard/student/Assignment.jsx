@@ -281,7 +281,7 @@ const AssignmentsPage = () => {
                 {assignment.status?.toLowerCase() !== "completed" && 
                  assignment.status?.toLowerCase() !== "submitted" && (
                   <div className="border-t pt-6">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Submit Assignment</h3>
+                    
                     <div className="flex flex-col sm:flex-row gap-3">
                       <input
                         type="file"

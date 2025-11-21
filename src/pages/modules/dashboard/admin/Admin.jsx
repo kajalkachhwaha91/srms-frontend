@@ -90,7 +90,7 @@ const Dashboard = () => {
       <div className="bg-white w-full max-w-6xl rounded-lg shadow p-6 space-y-6">
         {/* Welcome Section */}
         <h2 className="text-lg font-semibold">
-          Welcome Admin <span className="text-gray-500">(admin@met.com)</span>
+          Welcome  <span className="text-gray-500">(pranay@gmail.com)</span>
         </h2>
 
         {/* Cards Section */}
