@@ -167,10 +167,13 @@ const Signup = () => {
                             {isLoading ? "Creating Account..." : "Sign Up"}
                         </button>
 
-                        <p className="text-sm text-center mt-4 text-[#00b8f1] cursor-pointer hover:underline"
-                           onClick={() => navigate("/")}>
-                            Already have an account? Login
-                        </p>
+                       <p 
+    className="text-sm text-center mt-4 text-[#00b8f1] font-medium cursor-pointer hover:underline"
+    onClick={() => navigate("/login")}
+>
+    Already have an account? Login
+</p>
+
                     </div>
                 </div>
 
