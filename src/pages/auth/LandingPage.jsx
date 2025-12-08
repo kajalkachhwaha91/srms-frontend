@@ -1,10 +1,26 @@
 import React from "react";
 import { GraduationCap, FileText, TrendingUp, Award, Users, BarChart3, Shield, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import  { useEffect, useState } from "react";
+import Loader from "../../utils/Loader";
 
 
 const LandingPage = () => {
     const navigate = useNavigate(); 
+      const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time (like API or resource load)
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loader />; // 👈 Show loader before page loads
+  }
     
 
   return (
@@ -238,7 +254,7 @@ const LandingPage = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>&copy; 2025 KDK College of Engineering. All rights reserved.</p>
+            <p>&copy; Design and develop by kajal kachhwaha❤️All rights reserved.</p>
           </div>
         </div>
       </footer>
