@@ -1,107 +1,121 @@
-import React from "react";
+import React, { useState } from "react";
 import { LogOut } from "lucide-react";
+import { FaChevronDown } from "react-icons/fa6";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Logout } from "../store/slices/authSlice";
+import { Menu } from "lucide-react";
 
-const Navbar = ({ userName, userRole, profileImage }) => {
+const Navbar = ({
+  userName,
+  userRole,
+  profileImage,
+  toggleSidebar,
+  isMobile,
+}) => {
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Handle profile navigation based on user role
-  const handleProfile = () => {
-    const currentPath = location.pathname;
-    
-    if (currentPath.startsWith("/student")) {
-      navigate("/student/profile");
-    } else if (currentPath.startsWith("/staff")) {
-      navigate("/staff/profile");
-    } else if (currentPath.startsWith("/admin")) {
-      navigate("/admin/profile");
+  const { loading } = useSelector((state) => state.auth);
+
+  const handleLogout = async () => {
+    const resultAction = await dispatch(Logout());
+    if (Logout.fulfilled.match(resultAction)) {
+      navigate("/login");
     }
   };
 
-  // Handle logout with API call
-  const handleLogout = async () => {
-    try {
-      // Get the token from localStorage or wherever you store it
-      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthamFsQGV4YW1wbGUuY29tIiwicm9sZSI6IlRlYWNoZXIiLCJleHAiOjE3NjM2NTg5NzJ9.c1U9RN9W3VdZkSq1J5V69RQkZNQ2Lh5Moyc789qb5z8';
+  const handleProfileNavigate = () => {
+    const path = location.pathname;
 
-      // Call logout API
-      const response = await fetch('https://student-result-management-system-vikh.onrender.com/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+    if (path.startsWith("/student")) navigate("/student/profile");
+    else if (path.startsWith("/staff")) navigate("/staff/profile");
+    else if (path.startsWith("/admin")) navigate("/admin/profile");
 
-      const data = await response.json();
-
-      if (response.ok) {
-        // Clear token from client side (localStorage, sessionStorage, etc.)
-        localStorage.removeItem('token');
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('userName');
-        
-        // Show success message
-        console.log(data.message);
-        
-        // Redirect to login page
-        navigate('/login');
-      } else {
-        console.error('Logout failed:', data.message);
-        // Even if API fails, clear local data and redirect
-        localStorage.clear();
-        navigate('/login');
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-      // Clear local data and redirect even on error
-      localStorage.clear();
-      navigate('/login');
-    }
+    setIsProfileOpen(false);
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 h-16 bg-white shadow-sm flex items-center justify-between px-4 sm:px-6 z-40">
-      {/* Left Section: Page Title */}
-      <div className="flex items-center space-x-3">
-        <h1 className="text-lg sm:text-xl font-semibold text-gray-700 truncate">
-          Dashboard Overview
-        </h1>
-      </div>
-
-      {/* Right Section: Profile */}
-      <div className="flex items-center space-x-3 sm:space-x-4">
-        <div 
-          className="flex items-center bg-[#e6f7fc] rounded-full px-2 sm:px-3 py-1 cursor-pointer hover:bg-[#d9f3fa] transition-all"
-          onClick={handleProfile}
-        >
-          {/* Profile Image */}
-          <img
-            src={
-              profileImage ||
-              "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            }
-            alt="Profile"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-[#00b8f1]"
-          />
-
-          {/* User Details (Hidden on small screens) */}
-          <div className="hidden sm:block ml-2 text-right">
-            <p className="text-sm font-semibold text-gray-800">{userName}</p>
-            <p className="text-xs text-gray-500">{userRole}</p>
-          </div>
+    <nav className="fixed top-0 left-0 right-0 h-16 bg-white shadow-sm z-40">
+      <div className="h-full px-6 flex items-center justify-between">
+        
+        {/* LEFT */}
+        <div className="flex items-center gap-3">
+          {isMobile && (
+            <button onClick={toggleSidebar} className="p-2 rounded-lg hover:bg-gray-100">
+              <Menu size={22} />
+            </button>
+          )}
+          <h1 className="text-lg font-semibold text-[#00b8f1]">
+           ResultIQ
+          </h1>
         </div>
 
-        {/* Logout Button - hidden on very small screens */}
-        <button
-          onClick={handleLogout}
-          className="hidden sm:flex bg-[#00b8f1] hover:bg-[#009bd4] text-white px-3 py-2 rounded-lg text-sm items-center gap-2 transition-all"
-        >
-          <LogOut size={16} />
-          <span>Logout</span>
-        </button>
+        {/* RIGHT */}
+        <div className="relative">
+          {/* PROFILE BUTTON */}
+          <button
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
+          >
+            <img
+              src={
+                profileImage ||
+                "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+              }
+              alt="Profile"
+              className="w-9 h-9 rounded-full border border-gray-300 object-cover"
+            />
+
+            <div className="hidden sm:flex flex-col text-left leading-tight">
+              <span className="text-sm font-medium text-gray-800">
+                {userName}
+              </span>
+              <span className="text-xs text-gray-500">{userRole}</span>
+            </div>
+
+            <FaChevronDown
+              className={`w-4 h-4 text-gray-500 transition-transform ${
+                isProfileOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
+          {/* DROPDOWN */}
+          {isProfileOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+              <button
+                onClick={handleProfileNavigate}
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+              >
+                Profile
+              </button>
+
+              <div className="border-t border-gray-100">
+                <button
+                  onClick={handleLogout}
+                  disabled={loading}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
+                >
+                  <LogOut size={16} />
+                  {loading ? "Logging out..." : "Logout"}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* CLICK OUTSIDE */}
+      {isProfileOpen && (
+        <div
+          className="fixed inset-0 z-30"
+          onClick={() => setIsProfileOpen(false)}
+        />
+      )}
     </nav>
   );
 };

@@ -220,26 +220,7 @@ const StaffAssignments = () => {
             </div>
             
             <div className="flex items-center gap-3 flex-wrap w-full lg:w-auto">
-              <select value={year} onChange={(e) => setYear(e.target.value)} className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white shadow-sm">
-                <option>I Year</option>
-                <option>II Year</option>
-                <option>III Year</option>
-                <option>IV Year</option>
-              </select>
-
-              <select value={status} onChange={(e) => setStatus(e.target.value)} className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white shadow-sm">
-                <option>All</option>
-                <option>Not Submitted</option>
-                <option>Submitted</option>
-                <option>Verified</option>
-              </select>
-
-              <select value={assignment} onChange={(e) => setAssignment(e.target.value)} className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white shadow-sm">
-                <option>Assignment 1</option>
-                <option>Assignment 2</option>
-                <option>Assignment 3</option>
-                <option>Assignment 4</option>
-              </select>
+             
 
               <div className="relative">
                 <input type="text" placeholder="Search student, ID, code..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-sm w-64" />

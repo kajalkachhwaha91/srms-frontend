@@ -1,41 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchMarksAnalytics,
+  fetchAssignmentsAnalytics,
+} from "../../../../store/slices/adminSlice";
 import { GraduationCap, Users, ClipboardCheck } from "lucide-react";
 import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
+import Loader from "../../../../components/ui/Loader";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 
 const Dashboard = () => {
-  const [marksData, setMarksData] = useState(null);
-  const [assignmentsData, setAssignmentsData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+
+  const { marksData, assignmentsData, loading, error } = useSelector(
+    (state) => state.admin
+  );
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        
-        // Fetch marks analytics
-        const marksResponse = await fetch(
-          "https://student-result-management-system-vikh.onrender.com/marks/analytics"
-        );
-        const marksJson = await marksResponse.json();
-        setMarksData(marksJson);
-
-        // Fetch assignments analytics
-        const assignmentsResponse = await fetch(
-          "https://student-result-management-system-vikh.onrender.com/assignments/analytics"
-        );
-        const assignmentsJson = await assignmentsResponse.json();
-        setAssignmentsData(assignmentsJson);
-
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+    dispatch(fetchMarksAnalytics());
+    dispatch(fetchAssignmentsAnalytics());
+  }, [dispatch]);
 
   // Prepare pie chart data from assignments API
   const assignmentData = assignmentsData
@@ -55,8 +46,8 @@ const Dashboard = () => {
 
   // Calculate stats from marks data
   const totalStudents = marksData?.total_students || 240;
-  const avgPercentage = marksData?.average_percentage 
-    ? Math.round(marksData.average_percentage / 100) + "%" 
+  const avgPercentage = marksData?.average_percentage
+    ? Math.round(marksData.average_percentage / 100) + "%"
     : "90%";
 
   // Batch overview data - keeping structure but you can modify based on API
@@ -67,12 +58,20 @@ const Dashboard = () => {
     { year: "IV", batch: "2019-2023", pass: "85%" },
   ];
 
+  const AnalyticsCard = ({ title, children }) => (
+    <div className="bg-white rounded-2xl p-5 shadow-sm">
+      <h3 className="text-sm font-semibold mb-4">{title}</h3>
+      {children}
+    </div>
+  );
+
+  const batchGraphData = batchOverview.map((batch) => ({
+    batch: batch.batch,
+    passPercentage: parseInt(batch.pass.replace("%", "")),
+  }));
+
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
-        <div className="text-lg font-semibold">Loading...</div>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (error) {
@@ -86,11 +85,11 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
-      <div className="bg-white w-full max-w-6xl rounded-lg shadow p-6 space-y-6">
+    <div className=" bg-gray-100  flex flex-col items-center">
+      <div className="bg-white w-full  rounded-lg shadow p-6 space-y-6">
         {/* Welcome Section */}
-        <h2 className="text-lg font-semibold">
-          Welcome  <span className="text-gray-500">(pranay@gmail.com)</span>
+        <h2 className="text-lg font-semibold ">
+          Welcome <span className=" font-semibold">Admin!</span>
         </h2>
 
         {/* Cards Section */}
@@ -120,28 +119,39 @@ const Dashboard = () => {
 
         {/* Batch Overview & Pie Chart Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-          {/* Batch Overview Table */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="text-base font-semibold mb-3">Batch Overview</h3>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-gray-600 border-b">
-                  <th className="text-left pb-2">Year</th>
-                  <th className="text-left pb-2">Batch</th>
-                  <th className="text-left pb-2">Pass Percentage</th>
-                </tr>
-              </thead>
-              <tbody>
-                {batchOverview.map((batch, i) => (
-                  <tr key={i} className="border-b text-gray-700">
-                    <td className="py-2">{batch.year}</td>
-                    <td>{batch.batch}</td>
-                    <td>{batch.pass}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AnalyticsCard title="Batch Overview">
+            <div className="w-full h-[240px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={batchGraphData}>
+                  {/* Remove heavy grid */}
+                  <CartesianGrid vertical={false} stroke="#f1f5f9" />
+
+                  <XAxis
+                    dataKey="batch"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: "#64748b", fontSize: 12 }}
+                  />
+
+                  <YAxis
+                    domain={[0, 100]}
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: "#64748b", fontSize: 12 }}
+                  />
+
+                  <Tooltip formatter={(value) => `${value}%`} />
+
+                  <Bar
+                    dataKey="passPercentage"
+                    radius={[12, 12, 12, 12]}
+                    fill="#60A5FA" // soft blue
+                    barSize={26}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </AnalyticsCard>
 
           {/* Pie Chart Section */}
           <div className="bg-white rounded-lg shadow p-4">

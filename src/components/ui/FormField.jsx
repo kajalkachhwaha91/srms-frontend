@@ -1,6 +1,7 @@
 import React from "react";
 import { useFormikContext } from "formik";
 import ReactSelect from "react-select";
+import formTheme from "../../theme/formTheme";
 
 export default function FormField({
   label,
@@ -12,8 +13,8 @@ export default function FormField({
   loading = false,
   isMulti = false,
   readOnly,
-  autoComplete="on",
-  disabled=false
+  autoComplete = "on",
+  disabled = false,
 }) {
   const formik = useFormikContext();
 
@@ -56,9 +57,9 @@ export default function FormField({
             className="hidden" // hide native checkbox
           />
           <span
-            className={`flex items-center justify-center rounded-md border-2 border-orange-500
+            className={`flex items-center justify-center rounded-md border-2 border-blue-300
         w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-200
-        ${value ? "bg-orange-500" : "bg-white"}`}
+        ${value ? "bg-blue-300" : "bg-white"}`}
           >
             {value && (
               <svg
@@ -85,7 +86,8 @@ export default function FormField({
         <>
           <label
             htmlFor={name}
-            className="text-sm font-medium text-[#004AAD] mb-1"
+            className="text-sm font-medium mb-1"
+            style={{ color: formTheme.textLabel }}
           >
             {label}
           </label>
@@ -114,7 +116,13 @@ export default function FormField({
               }
             }}
             onBlur={formik.handleBlur}
-            className="border border-[#CCA547]/80 rounded-lg px-3 py-2 focus:outline-none"
+            className="border rounded-lg px-3 py-2 focus:outline-none "
+            //  ${touched && error ? "border-red-500" : ""}
+
+            style={{
+              borderColor:
+                touched && error ? formTheme.error : formTheme.border,
+            }}
           />
         </>
       ) : fieldType === "input" && type === "textarea" ? (
@@ -133,7 +141,11 @@ export default function FormField({
             disabled={disabled}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="border border-[#CCA547]/80 rounded-lg px-3 py-2 focus:outline-none"
+            className="border  rounded-lg px-3 py-2 focus:outline-none"
+            style={{
+              borderColor: formTheme.primary,
+              backgroundColor: value ? formTheme.primary : "#fff",
+            }}
           />
         </>
       ) : (
@@ -162,24 +174,37 @@ export default function FormField({
             onBlur={() => formik.setFieldTouched(name, true)}
             placeholder={`${label}`}
             classNamePrefix="react-select"
-            isDisabled={disabled||loading}
+            isDisabled={disabled || loading}
             isMulti={isMulti}
             styles={{
               control: (base, state) => ({
                 ...base,
-                minHeight: "44px",
-                borderRadius: "0.5rem",
+                minHeight: "48px",
+                borderRadius: "0.75rem",
                 borderColor: state.isFocused
-                  ? "#60A5FA"
+                  ? formTheme.primary
                   : touched && error
-                  ? "#EF4444"
-                  : "#CBD5E1",
-                boxShadow: state.isFocused ? "0 0 0 2px #60A5FA" : "none",
+                  ? formTheme.error
+                  : formTheme.borderLight,
+                boxShadow: state.isFocused
+                  ? `0 0 0 2px ${formTheme.borderLight}`
+                  : "none",
+                "&:hover": {
+                  borderColor: formTheme.primary,
+                },
               }),
-              valueContainer: (base) => ({
+              option: (base, state) => ({
                 ...base,
-                padding: "0 6px",
-                fontSize: "0.95rem",
+                backgroundColor: state.isSelected
+                  ? formTheme.primary
+                  : state.isFocused
+                  ? formTheme.borderLight
+                  : "#fff",
+                color: state.isSelected ? "#fff" : "#111827",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: formTheme.textInput,
               }),
             }}
           />

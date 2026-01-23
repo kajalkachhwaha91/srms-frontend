@@ -2,7 +2,7 @@ import React from "react";
 import { GraduationCap, FileText, TrendingUp, Award, Users, BarChart3, Shield, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import  { useEffect, useState } from "react";
-import Loader from "../../utils/Loader";
+import Loader from "../../components/ui/Loader";
 
 
 const LandingPage = () => {

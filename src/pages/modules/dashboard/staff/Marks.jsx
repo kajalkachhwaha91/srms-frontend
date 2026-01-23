@@ -30,9 +30,6 @@ const StudentManagement = () => {
         id: student._id,
         name: student.name,
         rollNo: student.rollNumber || "N/A",
-        class: student.class || "N/A",
-        section: student.section || "N/A",
-        phone: student.phone || "N/A",
         email: student.email,
         year: student.year || "2024",
         status: student.status !== undefined ? student.status : true,
@@ -160,12 +157,7 @@ const StudentManagement = () => {
               <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                 Student Details
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                Class & Section
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                Phone No.
-              </th>
+              
               <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                 Email
               </th>
@@ -228,13 +220,7 @@ const StudentManagement = () => {
                     </div>
                   </td>
                   
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 font-medium">{row.class} - {row.section}</div>
-                  </td>
-                  
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-700">{row.phone}</div>
-                  </td>
+                 
                   
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-700">{row.email}</div>

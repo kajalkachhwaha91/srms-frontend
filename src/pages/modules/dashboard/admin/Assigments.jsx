@@ -194,28 +194,8 @@ const AdminAssignments = () => {
       <div className="mb-6 bg-white rounded-xl shadow-md p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Year Dropdown */}
-            <select
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none transition-colors"
-            >
-              <option>I Year</option>
-              <option>II Year</option>
-              <option>III Year</option>
-              <option>IV Year</option>
-            </select>
-
-            {/* Assignment Dropdown */}
-            <select
-              value={assignment}
-              onChange={(e) => setAssignment(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none transition-colors"
-            >
-              <option>Assignment 1</option>
-              <option>Assignment 2</option>
-              <option>Assignment 3</option>
-            </select>
+           
+           
             
             {/* Status Dropdown */}
             <select
@@ -231,10 +211,7 @@ const AdminAssignments = () => {
             </select>
           </div>
 
-          {/* Add Button */}
-          <button className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md transition-colors">
-            + Create New Assignment
-          </button>
+          
         </div>
       </div>
 
@@ -256,9 +233,7 @@ const AdminAssignments = () => {
                 <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Actions
-                </th>
+                
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
@@ -306,23 +281,7 @@ const AdminAssignments = () => {
                       {renderStatusPill(a.isSubmitted)}
                     </td>
 
-                    {/* Actions */}
-                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                      <div className="flex items-center justify-center space-x-3">
-                        <button
-                          title="View Submission"
-                          className="text-gray-500 hover:text-cyan-600 p-2 rounded-full hover:bg-cyan-50 transition-colors"
-                        >
-                          <LuEye className="w-5 h-5" />
-                        </button>
-                        <button
-                          title="Grade/Edit Mark"
-                          className="text-gray-500 hover:text-cyan-600 p-2 rounded-full hover:bg-cyan-50 transition-colors"
-                        >
-                          <LuPencil className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </td>
+                  
                   </tr>
                 ))
               )}
