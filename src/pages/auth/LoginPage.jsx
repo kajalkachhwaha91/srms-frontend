@@ -85,8 +85,8 @@ const Login = () => {
             </h2>
             <Formik
               initialValues={{
-                email: "kanakk@gamil.com",
-                password: "Kanak@91",
+                 email: "kajalk@gmail.com",
+                password: "kajal@91",
                 role: "",
               }}
               onSubmit={async (values) => {
