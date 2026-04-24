@@ -191,7 +191,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Top Students Section */}
+        {/* Top Students Section
         {marksData?.top_students && marksData.top_students.length > 0 && (
           <div className="bg-white rounded-lg shadow p-4 mt-4">
             <h3 className="text-base font-semibold mb-3">Top Performers</h3>
@@ -224,7 +224,7 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

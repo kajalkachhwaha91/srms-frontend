@@ -44,10 +44,10 @@ const StaffPage = () => {
         average: Math.round(marksData.subject_averages[subject])
       }))
     : [
-        { subject: "Math", average: 75 },
-        { subject: "Science", average: 82 },
-        { subject: "English", average: 78 },
-        { subject: "History", average: 80 },
+        { subject: "DSA", average: 75 },
+        { subject: "OS", average: 82 },
+        { subject: "DBMS", average: 78 },
+        { subject: "AI", average: 80 },
       ];
 
   // Calculate stats
@@ -265,7 +265,7 @@ const StaffPage = () => {
         </div>
 
         {/* Top Performers Section */}
-        {marksData?.top_students && marksData.top_students.length > 0 && (
+        {/* {marksData?.top_students && marksData.top_students.length > 0 && (
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-gray-800">🏆 Top Performers</h3>
@@ -319,7 +319,7 @@ const StaffPage = () => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Assignment Analytics Summary */}
         {assignmentsData && (

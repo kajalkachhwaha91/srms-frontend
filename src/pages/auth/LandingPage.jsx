@@ -30,13 +30,13 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="bg-gray-900 w-10 h-10 flex items-center justify-center rounded-lg">
-                <span className="text-white text-xl font-bold">K</span>
+              <div className="bg-gray-900 w-32 h-10 flex items-center justify-center rounded-lg">
+                <span className="text-white text-xl font-bold">RESULTIQ</span>
               </div>
-              <div>
-                <h1 className="text-sm font-bold text-gray-800">MCA DEPARTMENT</h1>
+              {/* <div>
+                <h1 className="text-sm font-bold text-gray-800"></h1>
                 <p className="text-xs text-gray-600">KDK College of Engineering</p>
-              </div>
+              </div> */}
             </div>
             <button
           onClick={() => navigate("/login")}

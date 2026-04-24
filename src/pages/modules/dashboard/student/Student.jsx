@@ -3,7 +3,7 @@ import { GraduationCap, User, IndianRupee } from "lucide-react";
 
 const Students = () => {
   const student = {
-    name: "John",
+    // name: "John",
     regNo: "961321104000",
     cgpa: 8.5,
     attendance: "85%",
@@ -12,7 +12,7 @@ const Students = () => {
     gender: "Male",
     department: "CSE",
     yearSem: "Third/06",
-    batch: "2020 - 2024",
+    batch: "2024 - 2026",
     arrears: 4,
     degree: "B.E",
     email: "xyz@gmail.com",
@@ -27,7 +27,7 @@ const Students = () => {
       {/* Welcome Header */}
       <div className="bg-white shadow-md rounded-xl p-4 sm:p-6">
         <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-          Welcome {student.name}
+          {/* Welcome {student.name} */}
         </h2>
 
         {/* Stats Cards */}
