@@ -2,62 +2,86 @@ import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 // import conf from "../../config";
 
-// const sendMessageToAPI = async (message) => {
-//   const token = localStorage.getItem("token");
+const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-//   const response = await fetch(`${conf.apiBaseUrl}/chat`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: `Bearer ${token}`,
-//     },
-//     body: JSON.stringify({ message }),
-//   });
+const randomRange = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
 
-//   if (!response.ok) {
-//     throw new Error("Chatbot API failed");
-//   }
-
-//   const data = await response.json();
-//   return data.reply;
-// };
-
-// 🧠 FRONTEND CHATBOT LOGIC (NO BACKEND)
 const getBotReply = (message) => {
-  const msg = message.toLowerCase();
+  const msg = message.toLowerCase().trim();
+  const role = (localStorage.getItem("role") || "student")
+    .toLowerCase()
+    .trim();
 
   // Greeting
   if (msg.includes("hi") || msg.includes("hello")) {
-    return "Hello 👋 I'm your SRMS Assistant. How can I help you?";
+    return `Hello 👋 ${role.toUpperCase()} Panel Assistant ready.`;
   }
 
-  // Student marks
-  if (msg.includes("my performance") || msg.includes("my marks")) {
-    return "📊 Your total score this semester is **78%**. Great improvement!";
+  // PERFORMANCE / MARKS
+  if (msg.includes("performance") || msg.includes("marks")) {
+    if (role === "student") {
+      return `📊 Your predicted result is ${randomRange(74, 88)}%.`;
+    }
+    if (role === "teacher") {
+      return `📈 Class average performance is ${randomRange(68, 82)}%.`;
+    }
+    if (role === "admin") {
+      return `📊 Institute performance rate is ${randomRange(75, 90)}%.`;
+    }
   }
 
-  // Average class result
-  if (msg.includes("average") || msg.includes("class result")) {
-    return "📈 The class average this semester is **71%**.";
-  }
-
-  // Attendance
+  // ATTENDANCE
   if (msg.includes("attendance")) {
-    return "🧾 Your attendance is **92%**. You are eligible for exams ✅";
+    if (role === "student") {
+      return `🧾 Your attendance is ${randomRange(85, 97)}%.`;
+    }
+    if (role === "teacher") {
+      return `👨‍🏫 Class attendance average is ${randomRange(78, 92)}%.`;
+    }
+    if (role === "admin") {
+      return `🏫 Overall institution attendance is ${randomRange(80, 94)}%.`;
+    }
   }
 
-  // Exam date
+  // EXAMS
   if (msg.includes("exam")) {
-    return "🗓️ Your next exam is scheduled on **15 April 2026**.";
+    if (role === "student") {
+      return "📝 Your next exam is on 15 April 2026.";
+    }
+    if (role === "teacher") {
+      return "📚 Upcoming faculty invigilation starts 15 April 2026.";
+    }
+    if (role === "admin") {
+      return "🏫 Semester examinations begin from 15 April 2026.";
+    }
   }
 
-  // Analytics
-  if (msg.includes("analytics") || msg.includes("analysis")) {
-    return "📊 Analytics: Pass rate 86%, Top score 95%, Average 71%.";
+  // AVERAGE / CLASS RESULT
+  if (msg.includes("average") || msg.includes("class result")) {
+    return `📈 Average result is ${randomRange(68, 84)}%.`;
+  }
+
+  // ANALYTICS / REPORT
+  if (
+    msg.includes("analytics") ||
+    msg.includes("report") ||
+    msg.includes("students") ||
+    msg.includes("teachers")
+  ) {
+    return `📊 Dashboard Report:
+Pass Rate ${randomRange(82, 96)}%
+Avg Score ${randomRange(70, 85)}%
+Students ${randomRange(250, 600)}
+Teachers ${randomRange(20, 80)}`;
   }
 
   // Fallback
-  return "🤖 Sorry, I didn't understand that. Try asking about marks, attendance, or exams.";
+  return randomItem([
+    "🤖 Ask me about performance, attendance, exams, or analytics.",
+    "💬 I can help with results, reports, schedules, and attendance.",
+    "📌 Try asking: My performance / Attendance / Analytics",
+  ]);
 };
 
 const ChatBot = () => {
